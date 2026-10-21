@@ -295,7 +295,10 @@ class NotificationInbox
 
     private function maybePrune(): void
     {
-        if ($this->faked || random_int(1, 50) !== 1) {
+        // Like Laravel's session lottery: [2, 100] prunes on about 2 captures in 100; [0, 1] never.
+        [$wins, $of] = array_map('intval', array_pad((array) ($this->config['prune_lottery'] ?? [1, 50]), 2, 1));
+
+        if ($this->faked || $wins <= 0 || random_int(1, max(1, $of)) > $wins) {
             return;
         }
 

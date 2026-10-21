@@ -187,6 +187,7 @@ php artisan vendor:publish --tag=notification-inbox-config
 | `storage.path` | `NOTIFICATION_INBOX_PATH` | `storage/notification-inbox` |
 | `retention_hours` | `NOTIFICATION_INBOX_RETENTION_HOURS` | `72` |
 | `max_messages` | `NOTIFICATION_INBOX_MAX_MESSAGES` | `1000` |
+| `prune_lottery` | | `[1, 50]`: about one capture in fifty also prunes; `[0, 1]` never |
 | `redact` | | exact key names masked before storing: `auth`, `authorization`, `p256dh`, `api_key`, `apikey` |
 | `redact_containing` | | keys containing any of these are masked: `password`, `passcode`, `secret`, `token`, `otp`, `code`, `private_key`, `webhook` |
 | `mask_codes_in_text` | `NOTIFICATION_INBOX_MASK_CODES` | `false`; `true` masks 4 to 8 digit numbers inside message text |
@@ -230,7 +231,7 @@ password-reset links. So:
   `NOTIFICATION_INBOX_MASK_CODES=true`, which masks every 4 to 8 digit number in the text (order numbers and
   prices too, which is why it is off by default). Turn it on for shared staging servers.
 - `NotificationInbox::fake()` keeps everything in memory and unredacted, so tests can assert on it.
-- Pruning is opportunistic: about one capture in fifty also deletes notifications older than
+- Pruning is opportunistic: about one capture in fifty (`prune_lottery`) also deletes notifications older than
   `retention_hours` and the oldest beyond `max_messages`. A quiet inbox is therefore not pruned on its own,
   so on a shared staging server schedule the prune command:
 

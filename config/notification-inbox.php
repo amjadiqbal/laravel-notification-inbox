@@ -91,6 +91,9 @@ return [
 
     'max_messages' => (int) env('NOTIFICATION_INBOX_MAX_MESSAGES', 1000),
 
+    // Chance that a capture also prunes: [1, 50] is about one in fifty, [0, 1] never.
+    'prune_lottery' => [1, 50],
+
     /*
     |--------------------------------------------------------------------------
     | Redaction

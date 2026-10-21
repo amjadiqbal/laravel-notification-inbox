@@ -22,7 +22,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   machine" in the README and social preview, which now also say that your own `toX()` code still runs and
   mail and database are sent.
 - README and config explain that pruning is opportunistic (about one capture in fifty) and to schedule
-  `notification-inbox:prune`; Google Chat added to the channel table.
+  `notification-inbox:prune`; the chance is now configurable as `prune_lottery`. Google Chat added to the
+  channel table.
 
 ## [0.1.1] - 2026-10-21
 

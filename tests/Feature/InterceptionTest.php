@@ -218,7 +218,8 @@ it('redacts secrets and webhook paths on disk but not in a fake', function () {
 });
 
 it('prunes by age and by count', function () {
-    $inbox = $this->inboxIn('local', ['max_messages' => 2]);
+    // No automatic pruning during the captures, so the explicit prune() below sees all four.
+    $inbox = $this->inboxIn('local', ['max_messages' => 2, 'prune_lottery' => [0, 1]]);
 
     foreach (range(1, 4) as $i) {
         Notification::route('telegram', (string) $i)->notify(new OrderShipped(order: "N{$i}"));
@@ -229,6 +230,16 @@ it('prunes by age and by count', function () {
 
     touch(glob($this->inboxPath.'/*.json')[0], time() - 7200);
     expect($inbox->prune(1))->toBe(1)->and($inbox->all())->toHaveCount(1);
+});
+
+it('prunes on its own according to the lottery', function () {
+    $inbox = $this->inboxIn('local', ['max_messages' => 1, 'prune_lottery' => [1, 1]]);
+
+    foreach (range(1, 3) as $i) {
+        Notification::route('telegram', (string) $i)->notify(new OrderShipped(order: "N{$i}"));
+    }
+
+    expect($inbox->all())->toHaveCount(1);
 });
 
 it('is resolved once per app and swapped by fake()', function () {
