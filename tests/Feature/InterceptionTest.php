@@ -103,6 +103,21 @@ it('matches channel classes by class name and by short name', function () {
         ->and($inbox->intercepts('NotificationChannels\Twilio\TwilioChannel'))->toBeFalse();
 });
 
+it('runs before listeners the app registers, so they cannot send an intercepted notification', function () {
+    $inbox = $this->inboxIn('local');
+    $appListenerRan = false;
+    // An app listener that returns true would make until() stop and send, if it ran first.
+    Event::listen(NotificationSending::class, function () use (&$appListenerRan) {
+        $appListenerRan = true;
+
+        return true;
+    });
+
+    Notification::route('telegram', '1')->notify(new OrderShipped);
+
+    expect($inbox->all())->toHaveCount(1)->and($appListenerRan)->toBeFalse();
+});
+
 it('lets other NotificationSending listeners run when it passes a channel through', function () {
     $this->inboxIn('local', ['intercept' => ['slack']]);
     $seen = [];
@@ -199,7 +214,7 @@ it('redacts secrets and webhook paths on disk but not in a fake', function () {
     expect($raw)->not->toContain('SECRET')
         ->and($raw)->toContain('https://hooks.example.test/…')
         ->and($raw)->not->toContain('live_123')
-        ->and($inbox->all()[0]->payload)->toBe(['content' => 'Your code is 482913 for order A-1', 'from' => 'SHOP', 'secretHeader' => 'x']);
+        ->and($inbox->all()[0]->payload)->toBe(['content' => 'Your code is 482913 for order A-1', 'from' => 'SHOP', 'secretHeader' => '[redacted]']);
 });
 
 it('prunes by age and by count', function () {

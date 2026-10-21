@@ -17,6 +17,6 @@ Route::prefix(trim((string) config('notification-inbox.dashboard.path', 'notific
     ->group(function (): void {
         Route::get('/', [InboxController::class, 'index'])->name('index');
         Route::get('/api/messages', [InboxController::class, 'messages'])->name('messages');
-        Route::delete('/messages/{id}', [InboxController::class, 'destroy'])->name('destroy');
-        Route::delete('/messages', [InboxController::class, 'clear'])->name('clear');
+        Route::delete('/messages/{id}', [InboxController::class, 'destroy'])->name('destroy')->middleware(Authorize::class.':manageNotificationInbox');
+        Route::delete('/messages', [InboxController::class, 'clear'])->name('clear')->middleware(Authorize::class.':manageNotificationInbox');
     });

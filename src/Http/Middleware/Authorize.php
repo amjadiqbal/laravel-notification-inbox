@@ -9,9 +9,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class Authorize
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string $ability = 'viewNotificationInbox'): Response
     {
-        abort_unless(Gate::check('viewNotificationInbox'), 403);
+        abort_unless(Gate::check($ability), 403);
 
         return $next($request);
     }

@@ -76,9 +76,10 @@ return [
     |
     | Captured notifications are written as JSON files, one per message, so
     | there is no migration to run. They can hold personal data (phone numbers,
-    | one-time codes, reset links), so they are pruned after retention_hours and
-    | capped at max_messages. Run notification-inbox:prune from the scheduler
-    | as well if you capture on a shared staging server.
+    | one-time codes, reset links). About one capture in fifty also prunes what
+    | is older than retention_hours and beyond max_messages, so a quiet inbox
+    | is not pruned on its own: schedule notification-inbox:prune on a shared
+    | staging server.
     |
     */
 
@@ -95,17 +96,31 @@ return [
     | Redaction
     |--------------------------------------------------------------------------
     |
-    | Payload keys whose values are masked before they are written to disk
-    | (case-insensitive). Webhook URLs used as routes are always shortened to
-    | their host, because the path of a Slack, Teams or Discord webhook is a
-    | secret.
+    | Applied before anything is written to disk (NotificationInbox::fake()
+    | keeps everything in memory, unredacted, for assertions).
+    |
+    | "redact" masks keys with exactly these names; "redact_containing" masks
+    | any key that contains one of these words (otp_code, reset_token,
+    | client_secret...). All case-insensitive. Webhook URLs used as routes are
+    | always shortened to their host, because the path of a Slack, Teams or
+    | Discord webhook is a secret.
+    |
+    | "mask_codes_in_text" also replaces 4 to 8 digit numbers inside message
+    | text ("Your code is 482913") so one-time codes are not stored. It is off
+    | by default because it also hides order numbers and prices in previews;
+    | turn it on for shared staging servers.
     |
     */
 
     'redact' => [
-        'password', 'secret', 'api_key', 'apikey', 'access_token', 'auth', 'auth_token',
-        'authorization', 'p256dh', 'private_key', 'client_secret', 'webhook_url', 'webhookurl',
+        'auth', 'authorization', 'p256dh', 'api_key', 'apikey',
     ],
+
+    'redact_containing' => [
+        'password', 'passcode', 'secret', 'token', 'otp', 'code', 'private_key', 'webhook',
+    ],
+
+    'mask_codes_in_text' => env('NOTIFICATION_INBOX_MASK_CODES', false),
 
     /*
     |--------------------------------------------------------------------------

@@ -12,7 +12,6 @@ use Composer\InstalledVersions;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Notifications\Events\NotificationSending;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
@@ -31,7 +30,11 @@ final class NotificationInboxServiceProvider extends ServiceProvider
             return new NotificationInbox(
                 store: new FileStore(
                     (string) ($config['storage']['path'] ?? $app->storagePath('notification-inbox')),
-                    new Redactor(array_values(array_map('strval', (array) ($config['redact'] ?? [])))),
+                    new Redactor(
+                        array_values(array_map('strval', (array) ($config['redact'] ?? []))),
+                        array_values(array_map('strval', (array) ($config['redact_containing'] ?? []))),
+                        (bool) ($config['mask_codes_in_text'] ?? false),
+                    ),
                 ),
                 channels: new ChannelRegistry((array) ($config['channels'] ?? [])),
                 serializer: new PayloadSerializer,
@@ -39,6 +42,11 @@ final class NotificationInboxServiceProvider extends ServiceProvider
                 environment: (string) $app->environment(),
             );
         });
+
+        // Registered here, not in boot(): NotificationSending is dispatched with until(), so the first
+        // listener to return non-null decides. Registering during register() puts the inbox ahead of
+        // every listener added in any provider's boot() and the app's own listeners.
+        $this->app['events']->listen(NotificationSending::class, [Interceptor::class, 'handle']);
     }
 
     public function boot(): void
@@ -53,11 +61,14 @@ final class NotificationInboxServiceProvider extends ServiceProvider
             $this->commands([PruneCommand::class, ClearCommand::class]);
         }
 
-        Event::listen(NotificationSending::class, [Interceptor::class, 'handle']);
-
         // Apps open the dashboard elsewhere by defining this gate themselves (theirs boots later and wins).
         if (! Gate::has('viewNotificationInbox')) {
             Gate::define('viewNotificationInbox', fn ($user = null): bool => $this->app->environment('local'));
+        }
+
+        // Deleting is a separate right: someone allowed to look on staging is not automatically allowed to wipe.
+        if (! Gate::has('manageNotificationInbox')) {
+            Gate::define('manageNotificationInbox', fn ($user = null): bool => $this->app->environment('local'));
         }
 
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');

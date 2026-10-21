@@ -57,6 +57,7 @@ That is the whole setup. Send a notification, then open `/notification-inbox`.
 | APNs, APNs VoIP | `laravel-notification-channels/apn` | Phone alert with subtitle and app badge |
 | Expo | `laravel-notification-channels/expo` | Phone alert with badge |
 | OneSignal, Pushover | `laravel-notification-channels/onesignal`, `/pushover` | Phone alert |
+| Google Chat | `laravel-notification-channels/google-chat` | The payload as JSON (no look-alike yet) |
 | Slack | `laravel/slack-notification-channel` (Block Kit and legacy attachments) | Slack message: header, sections, fields, context, dividers, images, buttons |
 | Microsoft Teams | `laravel-notification-channels/microsoft-teams` | Adaptive Card (and the legacy MessageCard) |
 | Telegram | `laravel-notification-channels/telegram` | Chat bubble with Markdown or HTML, media, inline keyboard |
@@ -68,9 +69,13 @@ That is the whole setup. Send a notification, then open `/notification-inbox`.
 `mail` and `database` are **not** caught: mail already has Mailpit, Herd and friends, and the database
 channel only writes to your own database. Both lists are configurable.
 
-Nothing leaves the machine. Laravel fires `NotificationSending` before it even resolves a channel's
-driver, and the inbox cancels the send right there, so no HTTP client, SDK or credentials are touched.
-Queued notifications are caught in the worker the same way.
+Non-mail notification channels are caught instead of sent. Laravel fires `NotificationSending` before
+it even resolves a channel's driver, and the inbox cancels the send right there, so the channel's HTTP
+client, SDK and credentials are never touched. Queued notifications are caught in the worker the same way.
+
+What still runs is your own code: the inbox calls your `toX()` and `routeNotificationFor…()` methods to
+build each message, exactly as the channel would, so anything those methods do themselves (an HTTP call to
+shorten a link, say) still happens. Mail and database notifications are passed through and sent as usual.
 
 ## Safety: it cannot catch production by accident
 
@@ -87,6 +92,13 @@ A notification catcher left on in production silently swallows every message you
   (that is logged instead).
 - **It never halts other listeners.** For channels it lets through, its `NotificationSending` listener
   returns `null`, so your own listeners and other packages keep working.
+- **It runs first.** Laravel stops at the first `NotificationSending` listener that returns something, so
+  the inbox registers its listener while the app is still registering services, ahead of every listener
+  added in a service provider's `boot()` and the app's own. Only a package that adds a listener in its own
+  `register()`, earlier than this one, could still decide first; if such a listener returns `true` or
+  `false`, that wins.
+- **Looking is not deleting.** Delete and Clear all need a second gate, `manageNotificationInbox`, which
+  also only opens in `local` by default.
 
 To open the dashboard on staging, define the gate in `AppServiceProvider::boot()`:
 
@@ -94,6 +106,7 @@ To open the dashboard on staging, define the gate in `AppServiceProvider::boot()
 use Illuminate\Support\Facades\Gate;
 
 Gate::define('viewNotificationInbox', fn ($user) => $user?->is_admin);
+Gate::define('manageNotificationInbox', fn ($user) => $user?->is_admin);   // delete and clear
 ```
 
 ## The inbox
@@ -174,10 +187,12 @@ php artisan vendor:publish --tag=notification-inbox-config
 | `storage.path` | `NOTIFICATION_INBOX_PATH` | `storage/notification-inbox` |
 | `retention_hours` | `NOTIFICATION_INBOX_RETENTION_HOURS` | `72` |
 | `max_messages` | `NOTIFICATION_INBOX_MAX_MESSAGES` | `1000` |
-| `redact` | | keys masked before storing, such as `password`, `secret`, `auth`, `p256dh`, `webhook_url` |
+| `redact` | | exact key names masked before storing: `auth`, `authorization`, `p256dh`, `api_key`, `apikey` |
+| `redact_containing` | | keys containing any of these are masked: `password`, `passcode`, `secret`, `token`, `otp`, `code`, `private_key`, `webhook` |
+| `mask_codes_in_text` | `NOTIFICATION_INBOX_MASK_CODES` | `false`; `true` masks 4 to 8 digit numbers inside message text |
 | `dashboard.enabled` | `NOTIFICATION_INBOX_DASHBOARD` | `true` |
 | `dashboard.path` | `NOTIFICATION_INBOX_DASHBOARD_PATH` | `notification-inbox` |
-| `dashboard.middleware` | | `['web']` (the gate is always added) |
+| `dashboard.middleware` | | `['web']` (the gates are always added) |
 | `dashboard.poll_seconds` | | `3`; `0` turns live updates off |
 
 `php artisan about` shows whether the inbox is catching notifications in the current environment.
@@ -208,10 +223,16 @@ password-reset links. So:
 - Each one is stored as a JSON file in `storage/notification-inbox`, with a `.gitignore` so they never end
   up in git. Nothing goes into your database and there is no migration.
 - The notifiable is stored as its type, key and a label (`User #42`), never its attributes.
-- Keys listed in `redact` are masked before writing, and webhook routes (Slack, Teams, Discord) keep only
-  their host, because the path of a webhook URL is its secret.
-- Old notifications are pruned automatically after `retention_hours`, and the oldest beyond
-  `max_messages` are removed. On a shared staging server, schedule it as well:
+- Before writing, keys named in `redact` and keys containing a word from `redact_containing`
+  (`reset_token`, `otp_code`, `client_secret`…) are masked, and webhook routes (Slack, Teams, Discord) keep
+  only their host, because the path of a webhook URL is its secret.
+- One-time codes *inside the message text* ("Your code is 482913") are stored as they are unless you set
+  `NOTIFICATION_INBOX_MASK_CODES=true`, which masks every 4 to 8 digit number in the text (order numbers and
+  prices too, which is why it is off by default). Turn it on for shared staging servers.
+- `NotificationInbox::fake()` keeps everything in memory and unredacted, so tests can assert on it.
+- Pruning is opportunistic: about one capture in fifty also deletes notifications older than
+  `retention_hours` and the oldest beyond `max_messages`. A quiet inbox is therefore not pruned on its own,
+  so on a shared staging server schedule the prune command:
 
 ```php
 // routes/console.php

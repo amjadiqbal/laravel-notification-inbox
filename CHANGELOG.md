@@ -4,6 +4,26 @@ All notable changes to `laravel-notification-inbox` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.2] - 2026-10-21
+
+### Security
+- Delete and Clear all need a separate `manageNotificationInbox` gate (local only by default). Before, anyone
+  allowed to view the inbox could delete from it; the buttons are now hidden without the right.
+- Wider redaction before writing to disk: keys containing `password`, `passcode`, `secret`, `token`, `otp`,
+  `code`, `private_key` or `webhook` are masked (new `redact_containing`), on top of the exact names in
+  `redact`. New opt-in `mask_codes_in_text` (`NOTIFICATION_INBOX_MASK_CODES`) masks 4 to 8 digit codes inside
+  message text. Routes are never code-masked.
+
+### Changed
+- The `NotificationSending` listener is registered during `register()`, ahead of every listener added in a
+  provider's `boot()` and the app's own, so an earlier listener returning non-null can no longer send an
+  intercepted notification.
+- Wording: "non-mail notification channels are caught instead of sent" replaces "nothing leaves the
+  machine" in the README and social preview, which now also say that your own `toX()` code still runs and
+  mail and database are sent.
+- README and config explain that pruning is opportunistic (about one capture in fifty) and to schedule
+  `notification-inbox:prune`; Google Chat added to the channel table.
+
 ## [0.1.1] - 2026-10-21
 
 ### Fixed

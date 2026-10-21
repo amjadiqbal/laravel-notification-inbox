@@ -6,6 +6,7 @@
     ];
     $query = fn (array $extra = []) => array_filter(array_merge(['channel' => $channel, 'q' => $search !== '' ? $search : null], $extra), fn ($v) => $v !== null && $v !== '');
     $indexUrl = route('notification-inbox.index');
+    $canManage = \Illuminate\Support\Facades\Gate::check('manageNotificationInbox');
     $json = fn ($value) => json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR);
 @endphp
 <!DOCTYPE html>
@@ -123,7 +124,7 @@
     <span class="ni-status" title="Notifications on intercepted channels are captured here instead of being sent"><i></i>{{ $inbox->environment() }} · catching, nothing is sent</span>
     <span class="ni-spacer"></span>
     <span class="ni-count"><span data-ni-total>{{ $total }}</span> captured</span>
-    @if ($total > 0)
+    @if ($total > 0 && $canManage)
         <form method="POST" action="{{ route('notification-inbox.clear') }}" onsubmit="return confirm('Delete all {{ $total }} captured notifications?')">
             @csrf @method('DELETE')
             <button class="ni-btn danger" type="submit">Clear all</button>
@@ -191,12 +192,14 @@
                     </div>
                 @endif
                 <div class="ni-actions">
+                    @if ($canManage)
                     <form method="POST" action="{{ route('notification-inbox.destroy', $selected->id) }}">
                         @csrf @method('DELETE')
                         @if ($channel)<input type="hidden" name="channel" value="{{ $channel }}">@endif
                         @if ($search !== '')<input type="hidden" name="q" value="{{ $search }}">@endif
                         <button class="ni-btn danger" type="submit">Delete</button>
                     </form>
+                    @endif
                     <button class="ni-btn" type="button" data-ni-copy="{{ $json($selected->payload) }}">Copy payload</button>
                 </div>
             </div>

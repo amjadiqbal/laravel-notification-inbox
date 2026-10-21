@@ -117,6 +117,24 @@ it('is forbidden outside local unless the app defines the gate', function () {
     $this->get('/notification-inbox')->assertOk();
 });
 
+it('needs the separate manage gate to delete or clear', function () {
+    $this->inboxIn('staging', ['environments' => ['staging']]);
+    ($this->refreshRoutes)();
+    $ids = seedFixtures($this);
+    $this->withSession(['_token' => 't']);
+    Gate::define('viewNotificationInbox', fn ($user = null) => true);
+
+    // Viewing is allowed, deleting is not: manageNotificationInbox defaults to local only.
+    $this->get('/notification-inbox')->assertOk()->assertDontSee('Clear all')->assertDontSee('>Delete<', false);
+    $this->deleteJson('/notification-inbox/messages/'.$ids['slack'], [], ['X-CSRF-TOKEN' => 't'])->assertForbidden();
+    $this->delete('/notification-inbox/messages', ['_token' => 't'])->assertForbidden();
+    expect($this->inbox->all())->toHaveCount(11);
+
+    Gate::define('manageNotificationInbox', fn ($user = null) => true);
+    $this->get('/notification-inbox')->assertSee('Clear all');
+    $this->deleteJson('/notification-inbox/messages/'.$ids['slack'], [], ['X-CSRF-TOKEN' => 't'])->assertOk();
+});
+
 it('has no routes at all in production or when the dashboard is off', function (string $env, array $config) {
     $this->inboxIn($env, $config);
     ($this->refreshRoutes)();
