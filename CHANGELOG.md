@@ -24,3 +24,5 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   paths, no notifiable attributes, retention and size limits, `notification-inbox:prune` and
   `notification-inbox:clear`.
 - `php artisan about` section with the current status.
+- Each channel's route keys are read in the order the real channel reads them, and the inbox says when
+  the real channel would find no recipient.

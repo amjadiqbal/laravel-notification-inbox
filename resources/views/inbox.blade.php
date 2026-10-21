@@ -211,6 +211,13 @@
                 @if ($selected->error)
                     <div class="ni-error">The {{ $selected->channelLabel }} channel could not build this message, so it would have failed in a real send too.<br><span class="ni-mono">{{ $selected->error }}</span></div>
                 @else
+                    @php
+                        $routeKeys = $inbox->channels()->for($selected->channel)->routes;
+                        $ownRecipient = data_get($selected->payload, 'chat_id') ?? data_get($selected->payload, 'to');
+                    @endphp
+                    @if ($selected->route === null && $routeKeys !== [] && $ownRecipient === null)
+                        <div class="ni-error" style="font-weight: 500">No recipient: <span class="ni-mono">routeNotificationFor('{{ implode("') / ('", $routeKeys) }}')</span> returned nothing for {{ $selected->notifiable['label'] }}. Unless the message names its own recipient, the real {{ $selected->channelLabel }} channel would skip or reject it.</div>
+                    @endif
                     @include($preview->view(), ['n' => $selected, 'p' => $data])
                 @endif
             </section>

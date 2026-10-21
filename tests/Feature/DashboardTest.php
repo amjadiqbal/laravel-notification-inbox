@@ -83,6 +83,22 @@ it('deletes one and clears all', function () {
     expect($this->inbox->all())->toBe([]);
 });
 
+it('says when the real channel would find no recipient', function () {
+    $fixture = self::fixture('discord')->toArray();
+    $fixture['route'] = null;
+    $this->inbox->store()->put(CapturedNotification::fromArray($fixture));
+
+    $this->get('/notification-inbox')->assertOk()->assertSee("routeNotificationFor('discord')", false)->assertSee('would skip or reject it');
+
+    $withChat = self::fixture('telegram')->toArray();
+    $withChat['id'] = (string) Str::ulid();
+    $withChat['route'] = null;
+    $withChat['payload']['chat_id'] = '42';
+    $this->inbox->store()->put(CapturedNotification::fromArray($withChat));
+
+    $this->get('/notification-inbox?id='.$withChat['id'])->assertOk()->assertDontSee('would skip or reject it');
+});
+
 it('escapes payload content', function () {
     $fixture = self::fixture('twilio')->toArray();
     $fixture['payload']['content'] = '<script>alert(1)</script>';
