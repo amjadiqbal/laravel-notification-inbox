@@ -1,0 +1,491 @@
+{
+    "slack": {
+        "id": "01M5F9E2Q5J2ZQW39XCFP2NFQB",
+        "notification_id": "b3484940-2be9-4d2e-8cf1-e8663b52fbfe",
+        "notification": "App\\Notifications\\OrderShipped",
+        "channel": "slack",
+        "channel_key": "slack",
+        "channel_label": "Slack",
+        "preview": "slack",
+        "notifiable": {
+            "type": "Illuminate\\Notifications\\AnonymousNotifiable",
+            "key": null,
+            "label": "On-demand (slack, vonage, broadcast, web-push, fcm, fcm, apn, expo, telegram, microsoft-teams, discord, twilio)"
+        },
+        "route": "https://hooks.slack.com/…",
+        "payload": {
+            "channel": null,
+            "text": "Order A-1042 shipped",
+            "blocks": [
+                {
+                    "type": "header",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "Order A-1042 shipped"
+                    }
+                },
+                {
+                    "type": "context",
+                    "elements": [
+                        {
+                            "type": "plain_text",
+                            "text": "Customer #1287 · Express"
+                        }
+                    ]
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "The parcel left the *Leeds* warehouse. Tracking: `JD0002251`"
+                    },
+                    "fields": [
+                        {
+                            "type": "mrkdwn",
+                            "text": "*Carrier:*\nDHL"
+                        },
+                        {
+                            "type": "mrkdwn",
+                            "text": "*ETA:*\nThursday"
+                        }
+                    ]
+                },
+                {
+                    "type": "divider"
+                },
+                {
+                    "type": "actions",
+                    "elements": [
+                        {
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Track parcel"
+                            },
+                            "action_id": "button_track-parcel",
+                            "url": "https://example.test/track/JD0002251",
+                            "style": "primary"
+                        },
+                        {
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Refund"
+                            },
+                            "action_id": "button_refund",
+                            "style": "danger"
+                        }
+                    ]
+                }
+            ]
+        },
+        "message_class": "Illuminate\\Notifications\\Slack\\SlackMessage",
+        "error": null,
+        "queued": false,
+        "environment": "local",
+        "captured_at": "2026-10-21T13:11:59.461993+00:00",
+        "meta": []
+    },
+    "vonage": {
+        "id": "01M5F9E2QAW45XJ5T3R9QAF2Q4",
+        "notification_id": "b3484940-2be9-4d2e-8cf1-e8663b52fbfe",
+        "notification": "App\\Notifications\\OrderShipped",
+        "channel": "vonage",
+        "channel_key": "vonage",
+        "channel_label": "Vonage SMS",
+        "preview": "sms",
+        "notifiable": {
+            "type": "Illuminate\\Notifications\\AnonymousNotifiable",
+            "key": null,
+            "label": "On-demand (slack, vonage, broadcast, web-push, fcm, fcm, apn, expo, telegram, microsoft-teams, discord, twilio)"
+        },
+        "route": "+447700900123",
+        "payload": {
+            "content": "Your order A-1042 has shipped. Track: https://example.test/t/JD0002251",
+            "from": "SHOP",
+            "type": "text",
+            "clientReference": "",
+            "statusCallback": ""
+        },
+        "message_class": "Illuminate\\Notifications\\Messages\\VonageMessage",
+        "error": null,
+        "queued": false,
+        "environment": "local",
+        "captured_at": "2026-10-21T13:11:59.466330+00:00",
+        "meta": []
+    },
+    "web-push": {
+        "id": "01M5F9E2QD8WG3AKCNXAYHCHXT",
+        "notification_id": "b3484940-2be9-4d2e-8cf1-e8663b52fbfe",
+        "notification": "App\\Notifications\\OrderShipped",
+        "channel": "NotificationChannels\\WebPush\\WebPushChannel",
+        "channel_key": "web-push",
+        "channel_label": "Web push",
+        "preview": "push",
+        "notifiable": {
+            "type": "Illuminate\\Notifications\\AnonymousNotifiable",
+            "key": null,
+            "label": "On-demand (slack, vonage, broadcast, web-push, fcm, fcm, apn, expo, telegram, microsoft-teams, discord, twilio)"
+        },
+        "route": "sub",
+        "payload": {
+            "title": "Order A-1042 shipped",
+            "actions": [
+                {
+                    "title": "Track",
+                    "action": "track"
+                }
+            ],
+            "body": "Arriving Thursday. Tap to track your parcel.",
+            "icon": "/icon.png",
+            "data": {
+                "url": "/orders/A-1042"
+            }
+        },
+        "message_class": "NotificationChannels\\WebPush\\WebPushMessage",
+        "error": null,
+        "queued": false,
+        "environment": "local",
+        "captured_at": "2026-10-21T13:11:59.469651+00:00",
+        "meta": []
+    },
+    "fcm": {
+        "id": "01M5F9E2QJWJS4CH3MKMPN7P9H",
+        "notification_id": "b3484940-2be9-4d2e-8cf1-e8663b52fbfe",
+        "notification": "App\\Notifications\\OrderShipped",
+        "channel": "NotificationChannels\\Fcm\\FcmChannel",
+        "channel_key": "fcm",
+        "channel_label": "FCM",
+        "preview": "push",
+        "notifiable": {
+            "type": "Illuminate\\Notifications\\AnonymousNotifiable",
+            "key": null,
+            "label": "On-demand (slack, vonage, broadcast, web-push, fcm, fcm, apn, expo, telegram, microsoft-teams, discord, twilio)"
+        },
+        "route": "fcm-device-token-abc",
+        "payload": {
+            "data": {
+                "order": "A-1042"
+            },
+            "notification": {
+                "title": "Order A-1042 shipped",
+                "body": "Arriving Thursday.",
+                "image": "https://picsum.photos/400/200"
+            }
+        },
+        "message_class": "NotificationChannels\\Fcm\\FcmMessage",
+        "error": null,
+        "queued": false,
+        "environment": "local",
+        "captured_at": "2026-10-21T13:11:59.475831+00:00",
+        "meta": []
+    },
+    "apn": {
+        "id": "01M5F9E2QQFHD1P3VMT7M9W6KP",
+        "notification_id": "b3484940-2be9-4d2e-8cf1-e8663b52fbfe",
+        "notification": "App\\Notifications\\OrderShipped",
+        "channel": "NotificationChannels\\Apn\\ApnChannel",
+        "channel_key": "apn",
+        "channel_label": "APNs",
+        "preview": "push",
+        "notifiable": {
+            "type": "Illuminate\\Notifications\\AnonymousNotifiable",
+            "key": null,
+            "label": "On-demand (slack, vonage, broadcast, web-push, fcm, fcm, apn, expo, telegram, microsoft-teams, discord, twilio)"
+        },
+        "route": "apn-token",
+        "payload": {
+            "title": "Order A-1042 shipped",
+            "subtitle": "Express delivery",
+            "body": "Arriving Thursday.",
+            "badge": 3,
+            "sound": null,
+            "interruptionLevel": null,
+            "category": null,
+            "threadId": null,
+            "contentAvailable": null,
+            "titleLocKey": null,
+            "titleLocArgs": null,
+            "actionLocKey": null,
+            "locKey": null,
+            "locArgs": null,
+            "custom": [],
+            "urlArgs": [],
+            "pushType": null,
+            "expiresAt": null,
+            "collapseId": null,
+            "apnsId": null,
+            "priority": null,
+            "mutableContent": null,
+            "customAlert": null
+        },
+        "message_class": "NotificationChannels\\Apn\\ApnMessage",
+        "error": null,
+        "queued": false,
+        "environment": "local",
+        "captured_at": "2026-10-21T13:11:59.479606+00:00",
+        "meta": []
+    },
+    "expo": {
+        "id": "01M5F9E2QV90YY94R90R9NYHC4",
+        "notification_id": "b3484940-2be9-4d2e-8cf1-e8663b52fbfe",
+        "notification": "App\\Notifications\\OrderShipped",
+        "channel": "NotificationChannels\\Expo\\ExpoChannel",
+        "channel_key": "expo",
+        "channel_label": "Expo push",
+        "preview": "push",
+        "notifiable": {
+            "type": "Illuminate\\Notifications\\AnonymousNotifiable",
+            "key": null,
+            "label": "On-demand (slack, vonage, broadcast, web-push, fcm, fcm, apn, expo, telegram, microsoft-teams, discord, twilio)"
+        },
+        "route": "ExponentPushToken[xxxx]",
+        "payload": {
+            "data": "{\"order\":\"A-1042\"}",
+            "title": "Order A-1042 shipped",
+            "body": "Arriving Thursday.",
+            "priority": "default",
+            "sound": "default",
+            "badge": 2,
+            "mutableContent": false
+        },
+        "message_class": "NotificationChannels\\Expo\\ExpoMessage",
+        "error": null,
+        "queued": false,
+        "environment": "local",
+        "captured_at": "2026-10-21T13:11:59.483356+00:00",
+        "meta": []
+    },
+    "telegram": {
+        "id": "01M5F9E2SQ9FHDZM2W26S15NGW",
+        "notification_id": "b3484940-2be9-4d2e-8cf1-e8663b52fbfe",
+        "notification": "App\\Notifications\\OrderShipped",
+        "channel": "NotificationChannels\\Telegram\\TelegramChannel",
+        "channel_key": "telegram",
+        "channel_label": "Telegram",
+        "preview": "telegram",
+        "notifiable": {
+            "type": "Illuminate\\Notifications\\AnonymousNotifiable",
+            "key": null,
+            "label": "On-demand (slack, vonage, broadcast, web-push, fcm, fcm, apn, expo, telegram, microsoft-teams, discord, twilio)"
+        },
+        "route": "123456789",
+        "payload": {
+            "text": "*Order A-1042 shipped*\nArriving _Thursday_. Tracking `JD0002251`.\n",
+            "parse_mode": "Markdown",
+            "reply_markup": "{\"inline_keyboard\":[[{\"text\":\"Track parcel\",\"url\":\"https:\\/\\/example.test\\/track\\/JD0002251\"},{\"text\":\"Help\",\"url\":\"https:\\/\\/example.test\\/help\"}]]}"
+        },
+        "message_class": "NotificationChannels\\Telegram\\TelegramMessage",
+        "error": null,
+        "queued": false,
+        "environment": "local",
+        "captured_at": "2026-10-21T13:11:59.543833+00:00",
+        "meta": []
+    },
+    "microsoft-teams": {
+        "id": "01M5F9E2SY12NZCHES8CYGTQ62",
+        "notification_id": "b3484940-2be9-4d2e-8cf1-e8663b52fbfe",
+        "notification": "App\\Notifications\\OrderShipped",
+        "channel": "NotificationChannels\\MicrosoftTeams\\MicrosoftTeamsChannel",
+        "channel_key": "microsoft-teams",
+        "channel_label": "Microsoft Teams",
+        "preview": "teams",
+        "notifiable": {
+            "type": "Illuminate\\Notifications\\AnonymousNotifiable",
+            "key": null,
+            "label": "On-demand (slack, vonage, broadcast, web-push, fcm, fcm, apn, expo, telegram, microsoft-teams, discord, twilio)"
+        },
+        "route": "https://acme.webhook.office.com/…",
+        "payload": {
+            "type": "message",
+            "attachments": [
+                {
+                    "contentType": "application/vnd.microsoft.card.adaptive",
+                    "contentUrl": null,
+                    "content": {
+                        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                        "type": "AdaptiveCard",
+                        "version": "1.5",
+                        "body": [
+                            {
+                                "type": "TextBlock",
+                                "wrap": true,
+                                "style": "heading",
+                                "text": "Order A-1042 shipped",
+                                "weight": "bolder",
+                                "size": "large"
+                            },
+                            {
+                                "type": "TextBlock",
+                                "text": "The parcel left the Leeds warehouse.",
+                                "spacing": null,
+                                "separator": null,
+                                "horizontalAlignment": null,
+                                "maxLines": null,
+                                "style": null,
+                                "fontType": null,
+                                "size": null,
+                                "weight": null,
+                                "isSubtle": null,
+                                "color": null,
+                                "wrap": true
+                            },
+                            {
+                                "type": "FactSet",
+                                "spacing": null,
+                                "facts": [
+                                    {
+                                        "title": "Carrier",
+                                        "value": "DHL"
+                                    },
+                                    {
+                                        "title": "ETA",
+                                        "value": "Thursday"
+                                    }
+                                ],
+                                "separator": null
+                            }
+                        ],
+                        "actions": [
+                            {
+                                "type": "Action.OpenUrl",
+                                "title": "Track parcel",
+                                "mode": null,
+                                "style": null,
+                                "url": "https://example.test/track/JD0002251"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "message_class": "NotificationChannels\\MicrosoftTeams\\MicrosoftTeamsAdaptiveCard",
+        "error": null,
+        "queued": false,
+        "environment": "local",
+        "captured_at": "2026-10-21T13:11:59.550953+00:00",
+        "meta": []
+    },
+    "discord": {
+        "id": "01M5F9E2T2P6XMNZCG7JWHBQPG",
+        "notification_id": "b3484940-2be9-4d2e-8cf1-e8663b52fbfe",
+        "notification": "App\\Notifications\\OrderShipped",
+        "channel": "NotificationChannels\\Discord\\DiscordChannel",
+        "channel_key": "discord",
+        "channel_label": "Discord",
+        "preview": "discord",
+        "notifiable": {
+            "type": "Illuminate\\Notifications\\AnonymousNotifiable",
+            "key": null,
+            "label": "On-demand (slack, vonage, broadcast, web-push, fcm, fcm, apn, expo, telegram, microsoft-teams, discord, twilio)"
+        },
+        "route": "998877",
+        "payload": {
+            "body": "Order **A-1042** shipped",
+            "embed": {
+                "title": "Shipment update",
+                "description": "The parcel left the Leeds warehouse.",
+                "color": 5793266,
+                "url": "https://example.test/orders/A-1042",
+                "fields": [
+                    {
+                        "name": "Carrier",
+                        "value": "DHL",
+                        "inline": true
+                    },
+                    {
+                        "name": "ETA",
+                        "value": "Thursday",
+                        "inline": true
+                    }
+                ],
+                "footer": {
+                    "text": "Shop bot"
+                }
+            },
+            "components": []
+        },
+        "message_class": "NotificationChannels\\Discord\\DiscordMessage",
+        "error": null,
+        "queued": false,
+        "environment": "local",
+        "captured_at": "2026-10-21T13:11:59.554221+00:00",
+        "meta": []
+    },
+    "twilio": {
+        "id": "01M5F9E2T6WPGD6HW48QB18B65",
+        "notification_id": "b3484940-2be9-4d2e-8cf1-e8663b52fbfe",
+        "notification": "App\\Notifications\\OrderShipped",
+        "channel": "NotificationChannels\\Twilio\\TwilioChannel",
+        "channel_key": "twilio",
+        "channel_label": "Twilio SMS",
+        "preview": "sms",
+        "notifiable": {
+            "type": "Illuminate\\Notifications\\AnonymousNotifiable",
+            "key": null,
+            "label": "On-demand (slack, vonage, broadcast, web-push, fcm, fcm, apn, expo, telegram, microsoft-teams, discord, twilio)"
+        },
+        "route": "+15550134",
+        "payload": {
+            "alphaNumSender": null,
+            "messagingServiceSid": null,
+            "applicationSid": null,
+            "forceDelivery": null,
+            "maxPrice": null,
+            "provideFeedback": null,
+            "validityPeriod": null,
+            "attempt": null,
+            "contentRetention": null,
+            "addressRetention": null,
+            "smartEncoded": null,
+            "persistentAction": null,
+            "scheduleType": null,
+            "sendAt": null,
+            "sendAsMms": null,
+            "riskCheck": null,
+            "from": null,
+            "statusCallback": null,
+            "statusCallbackMethod": null,
+            "content": "Your code is 482913. Order A-1042 is on its way."
+        },
+        "message_class": "NotificationChannels\\Twilio\\TwilioSmsMessage",
+        "error": null,
+        "queued": false,
+        "environment": "local",
+        "captured_at": "2026-10-21T13:11:59.558161+00:00",
+        "meta": []
+    },
+    "broadcast": {
+        "id": "01M5F9E2TC3N33K438AN6H10YT",
+        "notification_id": "4e053c07-4609-49ed-bd04-701cca847330",
+        "notification": "App\\Notifications\\OrderShipped",
+        "channel": "broadcast",
+        "channel_key": "broadcast",
+        "channel_label": "Broadcast",
+        "preview": "broadcast",
+        "notifiable": {
+            "type": "App\\Models\\User",
+            "key": 1,
+            "label": "User #1"
+        },
+        "route": [
+            "private-App.Models.User.1"
+        ],
+        "payload": {
+            "order": "A-1042",
+            "status": "shipped",
+            "eta": "Thursday",
+            "id": "4e053c07-4609-49ed-bd04-701cca847330",
+            "type": "App\\Notifications\\OrderShipped"
+        },
+        "message_class": "Illuminate\\Notifications\\Messages\\BroadcastMessage",
+        "error": null,
+        "queued": false,
+        "environment": "local",
+        "captured_at": "2026-10-21T13:11:59.564700+00:00",
+        "meta": {
+            "event": "Illuminate\\Notifications\\Events\\BroadcastNotificationCreated",
+            "connection": null
+        }
+    }
+}
