@@ -53,7 +53,11 @@ final class TelegramPreview implements Preview
 
         return [
             'title' => null,
-            'text' => Markup::plain($raw),
+            'text' => match ($mode) {
+                'markdown' => Markup::telegramPlain($raw),
+                'markdownv2' => Markup::telegramPlain($raw, v2: true),
+                default => Markup::plain($raw),
+            },
             'html' => $this->html($raw, $mode),
             'chat' => Payload::firstString($p, ['chat_id']) ?? (is_scalar($notification->route) ? (string) $notification->route : null),
             'media' => $media,
@@ -69,8 +73,8 @@ final class TelegramPreview implements Preview
     {
         return match ($mode) {
             'html' => Markup::telegramHtml($raw),
-            'markdown' => Markup::markdown($raw, singleStarIsBold: true),
-            'markdownv2' => Markup::markdown($raw, singleStarIsBold: true),
+            'markdown' => Markup::telegramMarkdown($raw),
+            'markdownv2' => Markup::telegramMarkdown($raw, v2: true),
             default => new HtmlString(nl2br(e($raw), false)),
         };
     }

@@ -39,3 +39,14 @@ it('only allows http(s) and app paths as image sources', function () {
         ->and(Markup::imageUrl('javascript:alert(1)'))->toBeNull()
         ->and(Markup::imageUrl(null))->toBeNull();
 });
+
+it('renders Telegram legacy Markdown without word-boundary rules', function () {
+    expect((string) Markup::telegramMarkdown('*Order A-7 shipped*Arriving _Friday_. `JD_1` [Track](https://t.test/a_b)'))
+        ->toBe('<strong>Order A-7 shipped</strong>Arriving <em>Friday</em>. <code>JD_1</code> <a href="https://t.test/a_b" target="_blank" rel="noopener noreferrer">Track</a>')
+        ->and(Markup::telegramPlain('*Order A-7 shipped*Arriving _Friday_.'))->toBe('Order A-7 shippedArriving Friday.');
+});
+
+it('renders Telegram MarkdownV2 with its escapes', function () {
+    expect((string) Markup::telegramMarkdown('*Total\\* 5\\.00* __u__ ~s~ ||secret|| \\> quote <b>', v2: true))
+        ->toBe('<strong>Total* 5.00</strong> <u>u</u> <del>s</del> <span class="ni-spoiler">secret</span> &gt; quote &lt;b&gt;');
+});

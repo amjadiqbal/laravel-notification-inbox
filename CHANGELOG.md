@@ -4,6 +4,13 @@ All notable changes to `laravel-notification-inbox` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] - 2026-10-21
+
+### Fixed
+- Telegram previews follow Telegram's own Markdown rules: legacy `*bold*` and `_italic_` work right next to
+  other text (no literal stars in the bubble or the title), and MarkdownV2 renders `__underline__`,
+  `~strike~`, `||spoiler||` and backslash escapes. Found in the fresh-install test of 0.1.0.
+
 ## [0.1.0] - 2026-10-21
 
 ### Added

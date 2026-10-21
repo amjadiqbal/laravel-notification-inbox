@@ -58,9 +58,50 @@ final class Markup
             '/\|\|(.+?)\|\|/s' => '<span class="ni-spoiler">$1</span>',
         ]);
         // MarkdownV2 escapes such as \. \! \- show as the plain character.
-        $html = preg_replace('/\\\\([_*\[\]()~`>#+\-=|{}.!\\\\])/', '$1', $html) ?? $html;
+        $html = preg_replace('/\\\\(&(?:gt|lt|amp|quot|apos);|[_*\[\]()~`#+\-=|{}.!\\\\])/', '$1', $html) ?? $html;
 
         return new HtmlString(nl2br($m->restore($html), false));
+    }
+
+    /**
+     * Telegram's Markdown parse modes. Unlike CommonMark there is no word-boundary rule, so
+     * "*Order shipped*today" is bold too. Legacy Markdown: *bold*, _italic_, `code`, ```pre```,
+     * [label](url). MarkdownV2 adds __underline__, ~strike~, ||spoiler|| and backslash escapes.
+     */
+    public static function telegramMarkdown(string $text, bool $v2 = false): HtmlString
+    {
+        $m = new self;
+        $html = $m->escape($text);
+        $html = $m->protect($html, '/```(?:[a-z0-9]*\n)?(.+?)```/s', fn (array $x): string => '<pre>'.trim($x[1], "\n").'</pre>');
+        $html = $m->protect($html, '/`([^`\n]+)`/', fn (array $x): string => '<code>'.$x[1].'</code>');
+        $html = $m->protect($html, '/\[([^\]]+)\]\(((?:https?:\/\/|mailto:)[^)\s]+)\)/', fn (array $x): string => self::link($x[2], $x[1]));
+
+        if ($v2) {
+            // Escaped markers (\* \_ …) are kept aside so they never open or close an entity.
+            $html = $m->protect($html, '/\\\\(&(?:gt|lt|amp|quot|apos);|[_*\[\]()~`#+\-=|{}.!\\\\])/', fn (array $x): string => $x[1]);
+            $html = $m->rules($html, [
+                '/__(.+?)__/s' => '<u>$1</u>',
+                '/\*(.+?)\*/s' => '<strong>$1</strong>',
+                '/_(.+?)_/s' => '<em>$1</em>',
+                '/~(.+?)~/s' => '<del>$1</del>',
+                '/\|\|(.+?)\|\|/s' => '<span class="ni-spoiler">$1</span>',
+            ]);
+        } else {
+            $html = $m->rules($html, [
+                '/\*([^*]+)\*/' => '<strong>$1</strong>',
+                '/_([^_]+)_/' => '<em>$1</em>',
+            ]);
+        }
+
+        return new HtmlString(nl2br($m->restore($html), false));
+    }
+
+    /**
+     * Telegram Markdown as plain text, for titles, search and assertions.
+     */
+    public static function telegramPlain(string $text, bool $v2 = false): string
+    {
+        return trim(html_entity_decode(strip_tags((string) self::telegramMarkdown($text, $v2)), ENT_QUOTES | ENT_HTML5));
     }
 
     /**
