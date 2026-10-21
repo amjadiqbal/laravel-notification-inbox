@@ -24,7 +24,7 @@ final class Interceptor
         try {
             $this->inbox->capture($event->notifiable, $event->notification, $event->channel);
         } catch (Throwable $e) {
-            // Fail closed: while the inbox is active nothing is sent, even if the capture itself broke.
+            // Fail closed: while the inbox is active an intercepted channel is never sent, even if the capture itself broke.
             Log::error('Notification Inbox could not store a captured notification; it was not sent.', [
                 'notification' => $event->notification::class,
                 'channel' => $event->channel,

@@ -199,6 +199,16 @@ class NotificationInbox
     }
 
     /**
+     * Channels that are always sent normally, for status lines: "mail, database".
+     */
+    public function passThroughLabel(): string
+    {
+        $channels = array_map(fn (mixed $c): string => ChannelRegistry::shortName((string) $c), (array) ($this->config['pass_through'] ?? []));
+
+        return $channels === [] ? '' : implode(', ', $channels);
+    }
+
+    /**
      * @return list<string>
      */
     public function environments(): array

@@ -20,7 +20,7 @@ it('adds a passive line to artisan about', function () {
     $this->inboxIn('local');
 
     $this->artisan('about', ['--only' => 'notification inbox'])
-        ->expectsOutputToContain('catching notifications')
+        ->expectsOutputToContain('catching notifications (not sent; mail, database still sent)')
         ->expectsOutputToContain('amjad.com.pk/contact')
         ->assertSuccessful();
 });

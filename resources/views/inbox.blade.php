@@ -121,7 +121,7 @@
         <svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#0F172A"/><path d="M72 300 L126 214 Q132 204 144 204 H368 Q380 204 386 214 L440 300" fill="#1E293B"/><rect x="152" y="160" width="208" height="150" rx="22" fill="#F8FAFC"/><rect x="174" y="184" width="40" height="40" rx="10" fill="#8B5CF6"/><rect x="228" y="190" width="110" height="13" rx="6.5" fill="#475569"/><path d="M72 300 H182 Q192 300 196 309 L208 334 Q213 344 224 344 H288 Q299 344 304 334 L316 309 Q320 300 330 300 H440 V404 a28 28 0 0 1 -28 28 H100 a28 28 0 0 1 -28 -28 Z" fill="#8B5CF6"/></svg>
         Notification Inbox
     </a>
-    <span class="ni-status" title="Notifications on intercepted channels are captured here instead of being sent"><i></i>{{ $inbox->environment() }} · catching, nothing is sent</span>
+    <span class="ni-status" title="Notifications on intercepted channels are captured here instead of being sent{{ $inbox->passThroughLabel() !== '' ? '; '.$inbox->passThroughLabel().' are sent as usual' : '' }}"><i></i>{{ $inbox->environment() }} · catching, not sent{{ $inbox->passThroughLabel() !== '' ? ' (except '.$inbox->passThroughLabel().')' : '' }}</span>
     <span class="ni-spacer"></span>
     <span class="ni-count"><span data-ni-total>{{ $total }}</span> captured</span>
     @if ($total > 0 && $canManage)
@@ -133,7 +133,7 @@
 </header>
 
 @if ($inbox->isInterceptingProduction())
-    <div class="ni-banner danger" role="alert">This is PRODUCTION and notifications are being caught, not sent. Your users are not receiving them. Set NOTIFICATION_INBOX_ALLOW_PRODUCTION=false to stop.</div>
+    <div class="ni-banner danger" role="alert">This is PRODUCTION and notifications on intercepted channels are being caught, not sent{{ $inbox->passThroughLabel() !== '' ? ' (passed through: '.$inbox->passThroughLabel().')' : '' }}. Your users are not receiving them. Set NOTIFICATION_INBOX_ALLOW_PRODUCTION=false to stop.</div>
 @endif
 
 <div class="ni-layout">

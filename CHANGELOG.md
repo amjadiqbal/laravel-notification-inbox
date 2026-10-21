@@ -4,6 +4,13 @@ All notable changes to `laravel-notification-inbox` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.3] - 2026-10-21
+
+### Changed
+- The dashboard status, the production banner, `php artisan about` and the production log warning no
+  longer say "nothing is sent": they name the channels that are passed through and still sent (by default
+  mail and database), taken from the `pass_through` config.
+
 ## [0.1.2] - 2026-10-21
 
 ### Security

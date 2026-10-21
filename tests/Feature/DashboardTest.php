@@ -29,7 +29,8 @@ function seedFixtures($test): array
 }
 
 it('shows an empty inbox', function () {
-    $this->get('/notification-inbox')->assertOk()->assertSee('No notifications caught yet');
+    $this->get('/notification-inbox')->assertOk()->assertSee('No notifications caught yet')
+        ->assertSee('local · catching, not sent (except mail, database)');
 });
 
 it('renders every channel preview from real payloads', function (string $channel, array $expected) {
@@ -150,5 +151,5 @@ it('shows a loud banner when production is intercepted on purpose', function () 
     ($this->refreshRoutes)();
     Gate::define('viewNotificationInbox', fn ($user = null) => true);
 
-    $this->get('/notification-inbox')->assertOk()->assertSee('This is PRODUCTION and notifications are being caught');
+    $this->get('/notification-inbox')->assertOk()->assertSee('This is PRODUCTION and notifications on intercepted channels are being caught, not sent (passed through: mail, database)');
 });

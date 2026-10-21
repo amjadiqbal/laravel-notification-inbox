@@ -91,10 +91,11 @@ final class NotificationInboxServiceProvider extends ServiceProvider
     private function status(): string
     {
         $inbox = $this->app->make(NotificationInbox::class);
+        $except = $inbox->passThroughLabel() === '' ? '' : '; '.$inbox->passThroughLabel().' still sent';
 
         return match (true) {
-            $inbox->isInterceptingProduction() => '<fg=red;options=bold>CATCHING PRODUCTION NOTIFICATIONS (nothing is sent)</>',
-            $inbox->isActive() => '<fg=yellow;options=bold>catching notifications (not sent)</>',
+            $inbox->isInterceptingProduction() => '<fg=red;options=bold>CATCHING PRODUCTION NOTIFICATIONS (not sent'.$except.')</>',
+            $inbox->isActive() => '<fg=yellow;options=bold>catching notifications (not sent'.$except.')</>',
             $inbox->productionListedButIgnored() => 'off (production is listed but NOTIFICATION_INBOX_ALLOW_PRODUCTION is false)',
             default => 'off in this environment',
         };
@@ -105,7 +106,7 @@ final class NotificationInboxServiceProvider extends ServiceProvider
         $inbox = $this->app->make(NotificationInbox::class);
 
         if ($inbox->isInterceptingProduction()) {
-            Log::warning('Notification Inbox is CATCHING notifications in PRODUCTION: none are being sent. Set NOTIFICATION_INBOX_ALLOW_PRODUCTION=false to stop.');
+            Log::warning('Notification Inbox is CATCHING notifications in PRODUCTION: intercepted channels are not being sent (passed through: '.($inbox->passThroughLabel() ?: 'none').'). Set NOTIFICATION_INBOX_ALLOW_PRODUCTION=false to stop.');
         } elseif ($inbox->productionListedButIgnored() && $this->app->runningInConsole()) {
             // Console only (deploys, artisan): a misconfiguration worth seeing, not worth a line per request.
             Log::warning('Notification Inbox: "production" is in NOTIFICATION_INBOX_ENVIRONMENTS but NOTIFICATION_INBOX_ALLOW_PRODUCTION is false, so it is ignored and notifications are sent normally.');
