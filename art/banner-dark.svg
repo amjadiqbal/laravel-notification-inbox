@@ -1,0 +1,51 @@
+<svg width="1200" height="300" viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B1220"/>
+      <stop offset="100%" stop-color="#141331"/>
+    </linearGradient>
+    <linearGradient id="iconbg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#1B1840"/>
+    </linearGradient>
+    <linearGradient id="tray" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#6D28D9"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="300" fill="url(#bg)"/>
+  <g transform="translate(60,75) scale(0.29297)">
+    <rect width="512" height="512" rx="112" fill="url(#iconbg)"/>
+    <path d="M72 300 L126 214 Q132 204 144 204 H368 Q380 204 386 214 L440 300" fill="#1E293B" stroke="#334155" stroke-width="8" stroke-linejoin="round"/>
+    <g transform="rotate(-14 150 200)">
+      <path d="M96 150 a26 26 0 0 1 26 -26 H202 a26 26 0 0 1 26 26 V206 a26 26 0 0 1 -26 26 H138 L110 254 L114 232 a26 26 0 0 1 -18 -24 Z" fill="#7DD3FC"/>
+      <rect x="120" y="160" width="84" height="12" rx="6" fill="#0F172A" opacity="0.55"/>
+      <rect x="120" y="184" width="56" height="12" rx="6" fill="#0F172A" opacity="0.55"/>
+    </g>
+    <g transform="rotate(12 366 196)">
+      <rect x="306" y="128" width="112" height="150" rx="22" fill="#334155" stroke="#E2E8F0" stroke-width="8"/>
+      <rect x="320" y="160" width="84" height="40" rx="10" fill="#F8FAFC"/>
+      <rect x="328" y="170" width="20" height="20" rx="5" fill="#8B5CF6"/>
+      <rect x="354" y="172" width="42" height="7" rx="3.5" fill="#64748B"/>
+      <rect x="354" y="184" width="28" height="7" rx="3.5" fill="#94A3B8"/>
+    </g>
+    <g>
+      <rect x="152" y="196" width="208" height="118" rx="22" fill="#F8FAFC"/>
+      <rect x="174" y="218" width="40" height="40" rx="10" fill="#8B5CF6"/>
+      <rect x="228" y="222" width="110" height="13" rx="6.5" fill="#475569"/>
+      <rect x="228" y="244" width="78" height="13" rx="6.5" fill="#94A3B8"/>
+      <rect x="174" y="276" width="164" height="11" rx="5.5" fill="#CBD5E1"/>
+    </g>
+    <path d="M72 300 H182 Q192 300 196 309 L208 334 Q213 344 224 344 H288 Q299 344 304 334 L316 309 Q320 300 330 300 H440 V404 a28 28 0 0 1 -28 28 H100 a28 28 0 0 1 -28 -28 Z" fill="url(#tray)"/>
+    <path d="M226 372 H286" stroke="#EDE9FE" stroke-width="12" stroke-linecap="round" opacity="0.9"/>
+    <circle cx="408" cy="104" r="50" fill="#8B5CF6" stroke="#0F172A" stroke-width="12"/>
+    <text x="408" y="125" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="58" font-weight="700" fill="#FFFFFF">7</text>
+</g>
+  <text x="235" y="148" font-family="Helvetica, Arial, sans-serif" font-size="50" font-weight="700" fill="#F8FAFC">Laravel Notification Inbox</text>
+  <text x="238" y="188" font-family="Helvetica, Arial, sans-serif" font-size="21" font-weight="500" fill="#A78BFA" letter-spacing="0.3">Catch every notification in dev. Preview it. Assert it.</text>
+  <g font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#CBD5E1" text-anchor="middle"><g transform="translate(238,214)"><rect width="63" height="32" rx="16.0" fill="#16213A" stroke="#2A2F57"/><text x="31.5" y="21.12">push</text></g><g transform="translate(311,214)"><rect width="72" height="32" rx="16.0" fill="#16213A" stroke="#2A2F57"/><text x="36.0" y="21.12">Slack</text></g><g transform="translate(393,214)"><rect width="72" height="32" rx="16.0" fill="#16213A" stroke="#2A2F57"/><text x="36.0" y="21.12">Teams</text></g><g transform="translate(475,214)"><rect width="98" height="32" rx="16.0" fill="#16213A" stroke="#2A2F57"/><text x="49.0" y="21.12">Telegram</text></g><g transform="translate(583,214)"><rect width="89" height="32" rx="16.0" fill="#16213A" stroke="#2A2F57"/><text x="44.5" y="21.12">Discord</text></g><g transform="translate(682,214)"><rect width="55" height="32" rx="16.0" fill="#16213A" stroke="#2A2F57"/><text x="27.5" y="21.12">SMS</text></g><g transform="translate(747,214)"><rect width="106" height="32" rx="16.0" fill="#16213A" stroke="#2A2F57"/><text x="53.0" y="21.12">broadcast</text></g></g>
+  <g transform="translate(900,52)"><rect width="270" height="54" rx="12" fill="#16213A" stroke="#2A2F57"/><rect x="14" y="15" width="24" height="24" rx="6" fill="#8B5CF6"/><text x="50" y="23" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#E2E8F0">Push · Order shipped</text><text x="50" y="42" font-family="Menlo, Consolas, monospace" font-size="11.5" fill="#C4B5FD">webpush → captured, not sent</text></g>
+  <g transform="translate(900,116)"><rect width="270" height="54" rx="12" fill="#16213A" stroke="#2A2F57"/><rect x="14" y="15" width="24" height="24" rx="6" fill="#38BDF8"/><text x="50" y="23" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#E2E8F0">Slack · #deploys</text><text x="50" y="42" font-family="Menlo, Consolas, monospace" font-size="11.5" fill="#C4B5FD">blocks: 4 · header, section…</text></g>
+  <g transform="translate(900,180)"><rect width="270" height="54" rx="12" fill="#16213A" stroke="#2A2F57"/><rect x="14" y="15" width="24" height="24" rx="6" fill="#22C55E"/><text x="50" y="23" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#E2E8F0">SMS · +1 555 0134</text><text x="50" y="42" font-family="Menlo, Consolas, monospace" font-size="11.5" fill="#C4B5FD">“Your code is 482913”</text></g>
+  <text x="1170" y="275" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#64748B">amjadiqbal/laravel-notification-inbox</text>
+</svg>
