@@ -24,6 +24,8 @@ php_bin() {
 }
 
 COMPOSER=$(command -v composer)
+# A busy machine can push PHPStan past Composer's default 300s script timeout; a local run should wait.
+export COMPOSER_PROCESS_TIMEOUT=0
 SHIM=$(mktemp -d)
 cp composer.json "$SHIM/composer.json.orig"
 cleanup() { cp "$SHIM/composer.json.orig" composer.json; rm -f composer.lock; rm -rf "$SHIM"; }
