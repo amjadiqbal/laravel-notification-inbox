@@ -107,7 +107,7 @@ class NotificationInbox
                 [$payload, $route, $meta] = $this->broadcastDetails($notifiable, $notification, $message);
             } else {
                 $payload = $this->serializer->serialize($message);
-                $route = $this->serializer->serialize($this->route($definition, $notifiable, $notification, $channel));
+                $route = $this->serializer->serialize($this->route($definition, $notifiable, $notification));
             }
         } catch (Throwable $e) {
             // The real channel would have thrown here too: show the developer why.
@@ -228,13 +228,13 @@ class NotificationInbox
         ));
     }
 
-    private function route(ChannelDefinition $definition, object $notifiable, Notification $notification, string $channel): mixed
+    private function route(ChannelDefinition $definition, object $notifiable, Notification $notification): mixed
     {
         if (! method_exists($notifiable, 'routeNotificationFor')) {
             return null;
         }
 
-        foreach (array_unique(array_filter([$definition->route, $channel])) as $key) {
+        foreach ($definition->routes as $key) {
             $route = $notifiable->routeNotificationFor($key, $notification);
 
             if ($route !== null && $route !== false && $route !== '' && $route !== []) {

@@ -13,7 +13,12 @@ use Illuminate\Support\Str;
  */
 final class ChannelRegistry
 {
-    /** @var array<string, array{label: string, method: string|list<string>, route: string|null, preview: string}> */
+    /**
+     * 'route' lists the routeNotificationFor() keys in the order the channel tries them. A route the
+     * real channel would not find is not found here either, so the preview shows what would happen.
+     *
+     * @var array<string, array{label: string, method: string|list<string>, route: string|list<string>|null, preview: string}>
+     */
     private const BUILT_IN = [
         // Laravel's own channels.
         'broadcast' => ['label' => 'Broadcast', 'method' => ['toBroadcast', 'toArray'], 'route' => null, 'preview' => 'broadcast'],
@@ -32,12 +37,12 @@ final class ChannelRegistry
         'NotificationChannels\Expo\ExpoChannel' => ['label' => 'Expo push', 'method' => 'toExpo', 'route' => 'expo', 'preview' => 'push'],
         'expo' => ['label' => 'Expo push', 'method' => 'toExpo', 'route' => 'expo', 'preview' => 'push'],
         'NotificationChannels\OneSignal\OneSignalChannel' => ['label' => 'OneSignal', 'method' => 'toOneSignal', 'route' => 'OneSignal', 'preview' => 'push'],
-        'NotificationChannels\Telegram\TelegramChannel' => ['label' => 'Telegram', 'method' => 'toTelegram', 'route' => 'telegram', 'preview' => 'telegram'],
-        'telegram' => ['label' => 'Telegram', 'method' => 'toTelegram', 'route' => 'telegram', 'preview' => 'telegram'],
+        'NotificationChannels\Telegram\TelegramChannel' => ['label' => 'Telegram', 'method' => 'toTelegram', 'route' => ['telegram', 'NotificationChannels\Telegram\TelegramChannel'], 'preview' => 'telegram'],
+        'telegram' => ['label' => 'Telegram', 'method' => 'toTelegram', 'route' => ['telegram', 'NotificationChannels\Telegram\TelegramChannel'], 'preview' => 'telegram'],
         'NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel' => ['label' => 'Microsoft Teams', 'method' => 'toMicrosoftTeams', 'route' => 'microsoftTeams', 'preview' => 'teams'],
         'NotificationChannels\Discord\DiscordChannel' => ['label' => 'Discord', 'method' => 'toDiscord', 'route' => 'discord', 'preview' => 'discord'],
-        'NotificationChannels\Twilio\TwilioChannel' => ['label' => 'Twilio SMS', 'method' => 'toTwilio', 'route' => 'twilio', 'preview' => 'sms'],
-        'twilio' => ['label' => 'Twilio SMS', 'method' => 'toTwilio', 'route' => 'twilio', 'preview' => 'sms'],
+        'NotificationChannels\Twilio\TwilioChannel' => ['label' => 'Twilio SMS', 'method' => 'toTwilio', 'route' => ['NotificationChannels\Twilio\TwilioChannel', 'twilio'], 'preview' => 'sms'],
+        'twilio' => ['label' => 'Twilio SMS', 'method' => 'toTwilio', 'route' => ['NotificationChannels\Twilio\TwilioChannel', 'twilio'], 'preview' => 'sms'],
         'NotificationChannels\Messagebird\MessagebirdChannel' => ['label' => 'MessageBird SMS', 'method' => 'toMessagebird', 'route' => 'messagebird', 'preview' => 'sms'],
         'NotificationChannels\Plivo\PlivoChannel' => ['label' => 'Plivo SMS', 'method' => 'toPlivo', 'route' => 'plivo', 'preview' => 'sms'],
         'NotificationChannels\AwsSns\SnsChannel' => ['label' => 'AWS SNS', 'method' => 'toSns', 'route' => 'sns', 'preview' => 'sms'],
@@ -59,12 +64,12 @@ final class ChannelRegistry
             return $this->resolved[$channel];
         }
 
-        /** @var array{label?: string, method?: string|list<string>, route?: string|null, preview?: string}|null $config */
+        /** @var array{label?: string, method?: string|list<string>, route?: string|list<string>|null, preview?: string}|null $config */
         $config = $this->custom[$channel] ?? self::BUILT_IN[$channel] ?? null;
 
         if ($config === null) {
             // Unknown channel: guess the Laravel convention from its short name
-            // (App\Channels\WhatsAppChannel -> toWhatsApp, route 'whatsApp').
+            // (App\Channels\WhatsAppChannel -> toWhatsApp, route 'whatsApp', then the class itself).
             $config = ['label' => self::studly($channel)];
         }
 

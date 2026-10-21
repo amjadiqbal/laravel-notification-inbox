@@ -2,25 +2,25 @@
 
 use AmjadIqbal\NotificationInbox\Channels\ChannelRegistry;
 
-it('knows the popular channels by alias and by class', function (string $channel, string $key, array $methods, ?string $route, string $preview) {
+it('knows the popular channels by alias and by class', function (string $channel, string $key, array $methods, array $routes, string $preview) {
     $definition = (new ChannelRegistry)->for($channel);
 
     expect($definition->key)->toBe($key)
         ->and($definition->methods)->toBe($methods)
-        ->and($definition->route)->toBe($route)
+        ->and($definition->routes)->toBe($routes)
         ->and($definition->preview)->toBe($preview);
 })->with([
-    ['slack', 'slack', ['toSlack'], 'slack', 'slack'],
-    ['vonage', 'vonage', ['toVonage'], 'vonage', 'sms'],
-    ['broadcast', 'broadcast', ['toBroadcast', 'toArray'], null, 'broadcast'],
-    ['NotificationChannels\WebPush\WebPushChannel', 'web-push', ['toWebPush'], 'WebPush', 'push'],
-    ['NotificationChannels\Fcm\FcmChannel', 'fcm', ['toFcm'], 'fcm', 'push'],
-    ['NotificationChannels\Apn\ApnChannel', 'apn', ['toApn'], 'apn', 'push'],
-    ['NotificationChannels\Expo\ExpoChannel', 'expo', ['toExpo'], 'expo', 'push'],
-    ['NotificationChannels\Telegram\TelegramChannel', 'telegram', ['toTelegram'], 'telegram', 'telegram'],
-    ['NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel', 'microsoft-teams', ['toMicrosoftTeams'], 'microsoftTeams', 'teams'],
-    ['NotificationChannels\Discord\DiscordChannel', 'discord', ['toDiscord'], 'discord', 'discord'],
-    ['NotificationChannels\Twilio\TwilioChannel', 'twilio', ['toTwilio'], 'twilio', 'sms'],
+    ['slack', 'slack', ['toSlack'], ['slack'], 'slack'],
+    ['vonage', 'vonage', ['toVonage'], ['vonage'], 'sms'],
+    ['broadcast', 'broadcast', ['toBroadcast', 'toArray'], [], 'broadcast'],
+    ['NotificationChannels\WebPush\WebPushChannel', 'web-push', ['toWebPush'], ['WebPush'], 'push'],
+    ['NotificationChannels\Fcm\FcmChannel', 'fcm', ['toFcm'], ['fcm'], 'push'],
+    ['NotificationChannels\Apn\ApnChannel', 'apn', ['toApn'], ['apn'], 'push'],
+    ['NotificationChannels\Expo\ExpoChannel', 'expo', ['toExpo'], ['expo'], 'push'],
+    ['NotificationChannels\Telegram\TelegramChannel', 'telegram', ['toTelegram'], ['telegram', 'NotificationChannels\Telegram\TelegramChannel'], 'telegram'],
+    ['NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel', 'microsoft-teams', ['toMicrosoftTeams'], ['microsoftTeams'], 'teams'],
+    ['NotificationChannels\Discord\DiscordChannel', 'discord', ['toDiscord'], ['discord'], 'discord'],
+    ['NotificationChannels\Twilio\TwilioChannel', 'twilio', ['toTwilio'], ['NotificationChannels\Twilio\TwilioChannel', 'twilio'], 'sms'],
 ]);
 
 it('guesses the Laravel convention for unknown channels', function () {
@@ -28,7 +28,7 @@ it('guesses the Laravel convention for unknown channels', function () {
 
     expect($definition->key)->toBe('whats-app')
         ->and($definition->methods)->toBe(['toWhatsApp'])
-        ->and($definition->route)->toBe('whatsApp')
+        ->and($definition->routes)->toBe(['whatsApp', 'App\Channels\WhatsAppChannel'])
         ->and($definition->preview)->toBe('json');
 });
 

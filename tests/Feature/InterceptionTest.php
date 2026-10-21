@@ -154,6 +154,31 @@ it('uses routeNotificationFor on models and never stores their attributes', func
         ->and(json_encode(array_map(fn ($i) => $i->toArray(), $inbox->all())))->not->toContain('private@example.test');
 });
 
+it('reads routes only the way the real channel does', function () {
+    $inbox = $this->inboxIn('local');
+    $teams = 'NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel';
+    $twilio = 'NotificationChannels\Twilio\TwilioChannel';
+
+    // Teams only reads routeNotificationFor('microsoftTeams'), so a route keyed by the class is not found,
+    // exactly as the real channel would not find it. Twilio tries its class first, then 'twilio'.
+    Notification::route($teams, 'https://example.test/hook')->route($twilio, '+15550111')
+        ->notify(new class([$teams, $twilio]) extends OrderShipped
+        {
+            public function toMicrosoftTeams(): array
+            {
+                return ['text' => 'x'];
+            }
+
+            public function toTwilio(): array
+            {
+                return ['content' => 'y'];
+            }
+        });
+
+    expect($inbox->all()[1]->route)->toBeNull()
+        ->and($inbox->all()[0]->route)->toBe('+15550111');
+});
+
 it('marks queued notifications and groups channels by notification id', function () {
     $inbox = $this->inboxIn('local');
     $notification = new QueuedOrderShipped(['telegram', 'slack']);
