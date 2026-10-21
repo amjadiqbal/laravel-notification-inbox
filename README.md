@@ -17,6 +17,8 @@ It builds every message with the channel's own `toX()` method and route, exactly
 would, so your tests can assert against the **real payloads**, and a notification that would crash in
 production crashes here first.
 
+Docs and demo: https://amjad.com.pk/laravel/packages/laravel-notification-inbox
+
 [![Latest Version](https://img.shields.io/packagist/v/amjadiqbal/laravel-notification-inbox.svg?style=flat-square)](https://packagist.org/packages/amjadiqbal/laravel-notification-inbox)
 [![PHP Version](https://img.shields.io/packagist/php-v/amjadiqbal/laravel-notification-inbox?style=flat-square)](https://packagist.org/packages/amjadiqbal/laravel-notification-inbox)
 [![License](https://img.shields.io/packagist/l/amjadiqbal/laravel-notification-inbox.svg?style=flat-square)](LICENSE.md)

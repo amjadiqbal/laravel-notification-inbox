@@ -21,7 +21,7 @@
         "sms",
         "testing"
     ],
-    "homepage": "https://github.com/amjadiqbal/laravel-notification-inbox",
+    "homepage": "https://amjad.com.pk/laravel/packages/laravel-notification-inbox",
     "authors": [
         {
             "name": "Amjad Iqbal",
@@ -32,7 +32,7 @@
     "support": {
         "issues": "https://github.com/amjadiqbal/laravel-notification-inbox/issues",
         "source": "https://github.com/amjadiqbal/laravel-notification-inbox",
-        "docs": "https://github.com/amjadiqbal/laravel-notification-inbox#readme"
+        "docs": "https://amjad.com.pk/laravel/packages/laravel-notification-inbox"
     },
     "require": {
         "php": "^8.3",
